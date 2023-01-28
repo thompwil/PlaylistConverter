@@ -6,28 +6,14 @@ namespace PlaylistConverter.Services
 {
     public static class AppleMusicServices
     {
-        public static string Token = "";
-        public async static Task Authorize()
+        public static string Secret = "";
+        public static string CreateDevToken()
         {
-            // SSO into Apple Music
-        }
-
-        public async static void CreatePlaylist(Playlist playlist)
-        {
-            await Authorize();
-
-            // Get list of songs from playlist 
-            // Create Apple Music playlist
-            // Return URL
-
-
-        }
-
-        public async static Task<string> CreateDevToken()
-        {
+            // Get the 'issued at' and 'expiration' values 
             var iat = Math.Round((DateTime.UtcNow.AddMinutes(-1) - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds, 0);
             var exp = Math.Round((DateTime.UtcNow.AddMinutes(30) - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds, 0);
 
+            // The 'issued' code is the unqiue code from our Apple Devloper account
             var payload = new Dictionary<string, object>()
         {
             { "iat", iat },
@@ -35,6 +21,8 @@ namespace PlaylistConverter.Services
             { "iss", "2LVQ52Y6V4" }
         };
 
+            // We are encrypting this using ES256 per Apple Music Docs
+            // The 'KID' value is from the registered app in the dev account  
             var extraHeader = new Dictionary<string, object>()
         {
             { "alg", "ES256" },
@@ -42,7 +30,7 @@ namespace PlaylistConverter.Services
             { "kid", "6C9TU33CXS" }
         };
 
-            var keyString = "MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgrS+kt9hZQDcbTpkY5o0uPYV3zUfZIaiY4xU0nYHYJkugCgYIKoZIzj0DAQehRANCAATJiwgt5kJteru/PjjAyxF24z+sbDTutwDcJ+xVdVpOUMU2yJr18OqhT9dObvOynLOfi0wWU2n4J9Wny+E0SHXC";
+            var keyString = Secret;
 
             CngKey privateKey = CngKey.Import(Convert.FromBase64String(keyString), CngKeyBlobFormat.Pkcs8PrivateBlob);
 

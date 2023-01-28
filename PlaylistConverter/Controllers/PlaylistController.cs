@@ -2,31 +2,35 @@
 using PlaylistConverter.Services;
 using System.Text.Json;
 using PlaylistConverter.Models;
+using Microsoft.Extensions.Options;
 
 namespace PlaylistConverter.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class PlaylistController : ControllerBase
-    { 
+    {
+        public readonly IOptions<Keys> _keys; 
+        public PlaylistController(IOptions<Keys> keys)
+        {
+            _keys = keys;
+        }
         [HttpPost]
         public async Task<string> GetPlaylist(PlaylistId playlistId)
         {
+            SpotifyServices.DevToken = _keys.Value.SpotifyDevToken;
             PlaylistDetails playlistDetails = await SpotifyServices.GetPlaylistDetails(playlistId.Id);
-            Playlist playlist = await SpotifyServices.GetPlaylistTracks(playlistId.Id);
-            Playlist playlistUpdated = SpotifyServices.GetSongs(playlist, playlistDetails);
+            SpotifyPlaylist spotifyPlaylist = await SpotifyServices.GetPlaylistTracks(playlistId.Id);
+            Playlist playlistUpdated = SpotifyServices.BuildPlaylistData(spotifyPlaylist, playlistDetails);
             return JsonSerializer.Serialize(playlistUpdated);
         }
 
         [HttpGet]
-        public async Task<string> getAppleDevToken()
+        public string getAppleDevToken()
         {
-            return JsonSerializer.Serialize(await AppleMusicServices.CreateDevToken());
+            AppleMusicServices.Secret = _keys.Value.AppleSecret;
+            return JsonSerializer.Serialize(AppleMusicServices.CreateDevToken());
         }
 
-        public class PlaylistId
-        {
-            public string Id { get; set; }
-        }
     }
 }

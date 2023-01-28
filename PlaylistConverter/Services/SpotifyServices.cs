@@ -8,6 +8,7 @@ namespace PlaylistConverter.Services
     public static class SpotifyServices
     {
         public static string Token = "";
+        public static string DevToken = "";
         public async static Task Authorize()
         {
             HttpClient httpClient = new HttpClient();
@@ -48,7 +49,7 @@ namespace PlaylistConverter.Services
             }
         }
 
-        public static async Task<Playlist> GetPlaylistTracks(string playlistId)
+        public static async Task<SpotifyPlaylist> GetPlaylistTracks(string playlistId)
         {
             await Authorize();
             HttpClient httpClient = new HttpClient();
@@ -58,15 +59,15 @@ namespace PlaylistConverter.Services
 
                 requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Token);            
                 HttpResponseMessage response = await httpClient.SendAsync(requestMessage);
-                Playlist playlist = await response.Content.ReadFromJsonAsync<Playlist>();
+                SpotifyPlaylist? playlist = await response.Content.ReadFromJsonAsync<SpotifyPlaylist>();
                 return playlist;
             }
         }
 
-        public static Playlist GetSongs(Playlist playlist, PlaylistDetails details)
+        public static Playlist BuildPlaylistData(SpotifyPlaylist spotifyPlaylist, PlaylistDetails details)
         {
             List<Song> songs = new List<Song>();
-            foreach(var item in playlist.items)
+            foreach(var item in spotifyPlaylist.items)
             {
                 Song song = new Song();
                 List<string> artists = new List<string>();
@@ -80,6 +81,8 @@ namespace PlaylistConverter.Services
                 songs.Add(song);
                 
             }
+
+            Playlist playlist = new Playlist();
             playlist.songs = songs;
             playlist.description = details.description;
             playlist.name = details.name;

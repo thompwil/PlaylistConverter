@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@angular/forms": "^14.2.2",
+    "@types/musickit-js": "^1.0.5"
+  }
+}

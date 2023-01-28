@@ -1,0 +1,29 @@
+
+<div class="align-items-center pt-5 text-light">
+  <h1 class="text-center">All we need is the link to your playlist...</h1>
+  <div class="container text-center pt-5">
+    <div class="pr-5 row">
+      <div class="col">
+        <input class="playlist-link me-3 form-control-lg" type="text" [(ngModel)]="default" [formControl]="linkControl" />
+        <button class="btn-lg btn-primary" (click)="onSubmit()">Go!</button>
+      </div>
+    </div>
+    <div *ngIf="playlist.songs.length > 0" class="pt-5">
+      <h2>We found these Spotify songs:</h2>
+      <div *ngFor="let song of playlist.songs">
+        {{song.title}} - {{song.artists[0]}}
+      </div>
+    </div>
+    <div *ngIf="appleSongs.length > 0" class="pt-5">
+      <h2>We found these Apple Music songs:</h2>
+      <div *ngFor="let song of appleSongs">
+        {{song.attributes.name}} - {{song.attributes.artistName}}
+      </div>
+    </div>
+    <div *ngIf="creationSuccesful" class="pt-5">
+      <h2>Playlist Created Successfully!</h2>
+    </div>
+
+  </div>
+</div>
+

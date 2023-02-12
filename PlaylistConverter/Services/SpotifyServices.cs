@@ -16,7 +16,7 @@ namespace PlaylistConverter.Services
             using(var requestMessage = new HttpRequestMessage(HttpMethod.Post, "https://accounts.spotify.com/api/token"))
             {
                 
-                requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Basic", "YWVlOTUwYmMxNGZmNDIzOGI3MmI0ZmE1NGExNjY4NzU6YzIzYjQ2MGY0MDI3NGZlN2IzYzdhMmI4MWMwMzFiNGY=");
+                requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Basic", DevToken);
                 var body = new Dictionary<string, string> 
                 {
                     { "grant_type", "client_credentials" }

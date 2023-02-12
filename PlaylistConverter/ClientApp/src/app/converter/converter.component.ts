@@ -62,10 +62,14 @@ export class ConverterComponent {
   async searchSong(): Promise<void>  {
     const headers = { 'Authorization': 'Bearer ' + this.token }
     for (const song of this.playlist.songs) {
-      let result = await this.http.get<any>('https://api.music.apple.com/v1/catalog/us/search?types=songs,albums,artists&limit=1' + '&term=' + song.title + '+' + song.artists[0], { headers }).toPromise();
-      if(result.results.songs != undefined)
-        this.appleSongs.push(result.results.songs.data[0])
-      console.log(result);
+      try {
+        let result = await this.http.get<any>('https://api.music.apple.com/v1/catalog/us/search?types=songs,albums,artists&limit=1' + '&term=' + song.title + '+' + song.artists[0], { headers }).toPromise();
+        if (result.results.songs != undefined)
+          this.appleSongs.push(result.results.songs.data[0])
+
+        console.log(result);
+      }
+      catch (ex) {  }
     }
   }
 

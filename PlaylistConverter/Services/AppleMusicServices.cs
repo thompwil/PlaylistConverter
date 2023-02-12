@@ -32,9 +32,14 @@ namespace PlaylistConverter.Services
 
             var keyString = Secret;
 
-            CngKey privateKey = CngKey.Import(Convert.FromBase64String(keyString), CngKeyBlobFormat.Pkcs8PrivateBlob);
+            var result = ECDsa.Create();
 
-            return JWT.Encode(payload, privateKey, JwsAlgorithm.ES256, extraHeader);
+            // Had to change this because I was having issues with the CngKey.Import method on the remote server. 
+            // Need to test if it is working now (I changed some settings) but this method is more robust anyways
+            result.ImportPkcs8PrivateKey(Convert.FromBase64String(keyString), out _);
+            //CngKey privateKey = CngKey.Import(Convert.FromBase64String(keyString), CngKeyBlobFormat.Pkcs8PrivateBlob);
+
+            return JWT.Encode(payload, result, JwsAlgorithm.ES256, extraHeader);
         }
     }
 }
